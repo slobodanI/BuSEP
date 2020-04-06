@@ -1,14 +1,18 @@
 package com.BuSEPTim18.BuSEPTim18.dto;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.validator.constraints.URL;
+
 public class CertificateNewDTO {
 	
 	@NotNull
+	@URL
 	private String commonName;
 	@NotNull
 	private String givenname;
@@ -25,16 +29,16 @@ public class CertificateNewDTO {
 	@Email
 	private String email;
 	@NotNull
+	private LocalDate expirationDate;
 	
 	public CertificateNewDTO() {
 		// TODO Auto-generated constructor stub
 	}
-	
-	private Date expirationDate;
-	public CertificateNewDTO(@NotNull String commonName, @NotNull String givenname, @NotNull String surname,
+			
+	public CertificateNewDTO(@NotNull @URL String commonName, @NotNull String givenname, @NotNull String surname,
 			@NotNull String organization, @NotNull String organizationalUnit,
 			@NotNull @Size(min = 2, max = 2) String countryCode, @NotNull @Email String email,
-			@NotNull Date expirationDate) {
+			@NotNull LocalDate expirationDate) {
 		super();
 		this.commonName = commonName;
 		this.givenname = givenname;
@@ -87,10 +91,10 @@ public class CertificateNewDTO {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	public Date getExpirationDate() {
+	public LocalDate getExpirationDate() {
 		return expirationDate;
 	}
-	public void setExpirationDate(Date expirationDate) {
+	public void setExpirationDate(LocalDate expirationDate) {
 		this.expirationDate = expirationDate;
 	}
 				  	

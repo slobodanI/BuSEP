@@ -4,6 +4,9 @@ import java.math.BigInteger;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import org.bouncycastle.asn1.DERIA5String;
 import org.bouncycastle.asn1.x509.BasicConstraints;
@@ -32,7 +35,7 @@ public class CertificateGenerator {
 		serialNumber = new KeyStoreRepository().getCertificates().size();
 	}
 	
-	public X509Certificate generateCertificate(SubjectData subjectData, IssuerData issuerData, boolean isCA) throws CertIOException {
+	public X509Certificate generateCertificate(SubjectData subjectData, IssuerData issuerData, boolean isCA) throws CertIOException, ParseException {
 		try {
 			
 			JcaContentSignerBuilder builder = new JcaContentSignerBuilder("SHA256WithRSAEncryption");
@@ -43,12 +46,16 @@ public class CertificateGenerator {
 			//lokacija sertifikata, na netu kaze da ne mora za CA da se koristi, ali ne smeta
 			GeneralName location = new GeneralName(GeneralName.uniformResourceIdentifier, new DERIA5String("http://localhost:8080/api/certificate/" + serialNumber));
 			
+			SimpleDateFormat iso8601Formater = new SimpleDateFormat("yyyy-MM-dd");
+			Date startDate = iso8601Formater.parse(subjectData.getStartDate().toString());
+			Date endDate = iso8601Formater.parse(subjectData.getEndDate().toString());
+			
 			//Postavljaju se podaci za generisanje sertifiakta
 			X509v3CertificateBuilder certGen = new JcaX509v3CertificateBuilder(
 					issuerData.getX500name(),
 					new BigInteger(Long.toString(serialNumber)),
-					subjectData.getStartDate(),
-					subjectData.getEndDate(),
+					startDate,
+					endDate,
 					subjectData.getX500name(),
 					subjectData.getPublicKey())
 					.addExtension(Extension.basicConstraints, true, new BasicConstraints(isCA)) // da li je certificat CA

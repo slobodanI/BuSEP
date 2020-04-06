@@ -77,7 +77,7 @@ public class KeyStoreRepository {
 	public IssuerData getIssuerData(String issuerSerialNumber) {
 		try {
 			loadKeyStore();
-			
+			//mozda dotati cert.getBasicCostraints != -1
 			X509Certificate cert = (X509Certificate) keyStore.getCertificate(issuerSerialNumber);
 			PrivateKey privateKey = (PrivateKey) keyStore.getKey(issuerSerialNumber, keyStorePassword.toCharArray());
 			

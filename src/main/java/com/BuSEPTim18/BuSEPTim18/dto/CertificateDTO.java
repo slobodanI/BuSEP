@@ -4,6 +4,8 @@ import java.math.BigInteger;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.bouncycastle.asn1.x500.AttributeTypeAndValue;
 import org.bouncycastle.asn1.x500.RDN;
 import org.bouncycastle.asn1.x500.X500Name;
@@ -11,7 +13,6 @@ import org.bouncycastle.asn1.x500.style.BCStyle;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
 
 import com.BuSEPTim18.BuSEPTim18.model.CertificateStatus;
-
 
 public class CertificateDTO {
 	
