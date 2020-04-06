@@ -4,11 +4,9 @@ import java.io.StringWriter;
 import java.security.KeyPair;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-
-import javax.xml.bind.DatatypeConverter;
 
 import org.bouncycastle.asn1.x500.X500Name;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,11 +41,6 @@ public class CertificateService {
 		}
 		
 		return 	listCertDTO;
-		// mnogo kraci nacin
-//		return certificateRepository.getCertificates()
-//			.stream()
-//			.map(CertificateDTO::new)
-//			.collect(Collectors.toList());
 	}
 	
 	public List<CertificateDTO> getAllCa() {
@@ -64,11 +57,6 @@ public class CertificateService {
 		}
 		
 		return listCertDTO;
-//		return repository.getCertificates()
-//			.stream()
-//			.filter(c -> c.getBasicConstraints() != -1)
-//			.map(CertificateDTO::new)
-//			.collect(Collectors.toList());
 	}
 	
 	public X509Certificate getOne(String serialNumber) {
@@ -81,9 +69,7 @@ public class CertificateService {
 		StringWriter streamWritter = new StringWriter();
 		
 		try {
-			streamWritter.write("-----BEGIN CERTIFICATE-----\n");
-			streamWritter.write(DatatypeConverter.printBase64Binary(cert.getEncoded()).replaceAll("(.{64})", "$1\n"));
-			streamWritter.write("\n-----END CERTIFICATE-----\n");
+			streamWritter.write(CertificateUtil.encode(cert.getEncoded()));
 		} catch (CertificateEncodingException e) {
 			e.printStackTrace();
 		}
@@ -96,7 +82,7 @@ public class CertificateService {
 			X500Name x500name = CertificateUtil.generateX500Name(newCert);
 			KeyPair keyPair = CertificateUtil.generateKeyPair();
 
-			SubjectData subjectData = new SubjectData(keyPair.getPublic(), x500name, new Date(), newCert.getExpirationDate());
+			SubjectData subjectData = new SubjectData(keyPair.getPublic(), x500name, LocalDate.now(), newCert.getExpirationDate());
 			IssuerData issuerData = new IssuerData(keyPair.getPrivate(), x500name);
 
 			X509Certificate certificate = certificateGenerator.generateCertificate(subjectData, issuerData, true);	
@@ -121,7 +107,7 @@ public class CertificateService {
 			X500Name x500name = CertificateUtil.generateX500Name(newCert);
 			KeyPair keyPair = CertificateUtil.generateKeyPair();
 			
-			SubjectData subjectData = new SubjectData(keyPair.getPublic(), x500name, new Date(), newCert.getExpirationDate());
+			SubjectData subjectData = new SubjectData(keyPair.getPublic(), x500name, LocalDate.now(), newCert.getExpirationDate());
 			
 			X509Certificate certificate = certificateGenerator.generateCertificate(subjectData, issuerData, isCa);
 			

@@ -1,11 +1,11 @@
 package com.BuSEPTim18.BuSEPTim18.utils;
 
+import java.io.IOException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
-import java.util.Random;
 import java.util.UUID;
 
 import org.bouncycastle.asn1.x500.X500Name;
@@ -14,6 +14,9 @@ import org.bouncycastle.asn1.x500.style.BCStyle;
 
 import com.BuSEPTim18.BuSEPTim18.dto.CertificateNewDTO;
 
+import java.util.Base64;
+import java.util.Base64.Decoder;
+import java.util.Base64.Encoder;
 
 public class CertificateUtil {
 		
@@ -46,4 +49,17 @@ public class CertificateUtil {
 		}
         return null;
 	}
+	
+	//Pomocna funkcija za enkodovanje bajtova u string
+	 public static String encode(byte[] data) {
+		 Encoder encoder = Base64.getEncoder();
+		 return encoder.encodeToString(data);
+	 }
+	 
+	 //Pomocna funkcija za dekodovanje stringa u bajt niz
+	 public static byte[] decode(String base64Data) throws IOException {
+		 Decoder decoder = Base64.getDecoder();
+		 return decoder.decode(base64Data);
+	 }
+	
 }

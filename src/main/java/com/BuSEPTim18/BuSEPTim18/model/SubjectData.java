@@ -1,7 +1,7 @@
 package com.BuSEPTim18.BuSEPTim18.model;
 
 import java.security.PublicKey;
-import java.util.Date;
+import java.time.LocalDate;
 
 import org.bouncycastle.asn1.x500.X500Name;
 
@@ -9,10 +9,10 @@ public class SubjectData {
 	
 	private PublicKey publicKey;
 	private X500Name x500name;
-	private Date startDate;
-	private Date endDate;
+	private LocalDate startDate;
+	private LocalDate endDate;
 
-	public SubjectData(PublicKey publicKey, X500Name x500name, Date startDate, Date endDate) {
+	public SubjectData(PublicKey publicKey, X500Name x500name, LocalDate startDate, LocalDate endDate) {
 		this.publicKey = publicKey;
 		this.x500name = x500name;
 		this.startDate = startDate;
@@ -35,19 +35,19 @@ public class SubjectData {
 		this.x500name = x500name;
 	}
 
-	public Date getStartDate() {
+	public LocalDate getStartDate() {
 		return startDate;
 	}
 
-	public void setStartDate(Date startDate) {
+	public void setStartDate(LocalDate startDate) {
 		this.startDate = startDate;
 	}
 
-	public Date getEndDate() {
+	public LocalDate getEndDate() {
 		return endDate;
 	}
 
-	public void setEndDate(Date endDate) {
+	public void setEndDate(LocalDate endDate) {
 		this.endDate = endDate;
 	}
 	
