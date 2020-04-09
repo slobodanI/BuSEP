@@ -1,0 +1,16 @@
+@charset "ISO-8859-1";
+
+.aligned {
+	text-align: center;
+	margin: 20px;
+}
+
+.orangeborder{
+	border: 6px solid blue;
+	border-radius: 25px;
+	background: cyan;
+}
+
+.bodyBackground{
+	background: lightgray;
+}
