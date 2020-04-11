@@ -87,14 +87,24 @@ public class CertificateController {
 	@PostMapping("/selfsigned")
 	public ResponseEntity<CertificateDTO> createSelfSigned(@RequestBody @Valid CertificateNewDTO certNewDTO) {
 		
-		if (certNewDTO.getExpirationDate().isBefore(LocalDate.now())) {
+		System.out.println("1");
+		
+		LocalDate dt = LocalDate.parse(certNewDTO.getExpirationDate());
+		
+		System.out.println("2");
+		
+		if (dt.isBefore(LocalDate.now())) {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
+		
+		System.out.println("3");
 		
 		CertificateDTO certDTO = certificateService.addSelfSignedCa(certNewDTO);
 		if (certDTO == null) {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
+		
+		System.out.println("4");
 		
 		return new ResponseEntity<>(certDTO, HttpStatus.OK);
 	}
@@ -107,7 +117,10 @@ public class CertificateController {
 	 */
 	@PostMapping("/intermediate/{serialNumber}")
 	public ResponseEntity<CertificateDTO> createIntermediate(@PathVariable String serialNumber, @RequestBody @Valid CertificateNewDTO certNewDTO) {
-		if (certNewDTO.getExpirationDate().isBefore(LocalDate.now())) {
+		
+		LocalDate dt = LocalDate.parse(certNewDTO.getExpirationDate());
+		
+		if (dt.isBefore(LocalDate.now())) {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 		
@@ -128,7 +141,10 @@ public class CertificateController {
 	 */
 	@PostMapping("/end/{serialNumber}")
 	public ResponseEntity<CertificateDTO> createEnd(@PathVariable String serialNumber, @RequestBody @Valid CertificateNewDTO certNewDTO) {
-		if (certNewDTO.getExpirationDate().isBefore(LocalDate.now())) {
+		
+		LocalDate dt = LocalDate.parse(certNewDTO.getExpirationDate());
+		
+		if (dt.isBefore(LocalDate.now())) {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 		

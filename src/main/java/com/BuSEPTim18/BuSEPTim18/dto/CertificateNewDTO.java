@@ -29,7 +29,7 @@ public class CertificateNewDTO {
 	@Email
 	private String email;
 	@NotNull
-	private LocalDate expirationDate;
+	private String expirationDate;
 	
 	public CertificateNewDTO() {
 		// TODO Auto-generated constructor stub
@@ -38,7 +38,7 @@ public class CertificateNewDTO {
 	public CertificateNewDTO(@NotNull @URL String commonName, @NotNull String givenname, @NotNull String surname,
 			@NotNull String organization, @NotNull String organizationalUnit,
 			@NotNull @Size(min = 2, max = 2) String countryCode, @NotNull @Email String email,
-			@NotNull LocalDate expirationDate) {
+			@NotNull String expirationDate) {
 		super();
 		this.commonName = commonName;
 		this.givenname = givenname;
@@ -91,10 +91,10 @@ public class CertificateNewDTO {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	public LocalDate getExpirationDate() {
+	public String getExpirationDate() {
 		return expirationDate;
 	}
-	public void setExpirationDate(LocalDate expirationDate) {
+	public void setExpirationDate(String expirationDate) {
 		this.expirationDate = expirationDate;
 	}
 				  	
