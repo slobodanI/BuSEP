@@ -8,16 +8,21 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.bouncycastle.asn1.ASN1Encodable;import org.bouncycastle.asn1.ASN1Primitive;
+import org.bouncycastle.asn1.DERBitString;
 import org.bouncycastle.asn1.DERIA5String;
 import org.bouncycastle.asn1.x509.BasicConstraints;
+import org.bouncycastle.asn1.x509.ExtendedKeyUsage;
 import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.asn1.x509.GeneralName;
+import org.bouncycastle.asn1.x509.KeyPurposeId;
 import org.bouncycastle.asn1.x509.KeyUsage;
 import org.bouncycastle.cert.CertIOException;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.X509v3CertificateBuilder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
+import org.bouncycastle.crypto.tls.DigitallySigned;
 import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
@@ -35,7 +40,7 @@ public class CertificateGenerator {
 		serialNumber = new KeyStoreRepository().getCertificates().size();
 	}
 	
-	public X509Certificate generateCertificate(SubjectData subjectData, IssuerData issuerData, boolean isCA) throws CertIOException, ParseException {
+	public X509Certificate generateCertificate(SubjectData subjectData, IssuerData issuerData, boolean isCA, Date issuerExpirationDate) throws CertIOException, ParseException {
 		try {
 			
 			JcaContentSignerBuilder builder = new JcaContentSignerBuilder("SHA256WithRSAEncryption");
@@ -46,10 +51,19 @@ public class CertificateGenerator {
 			//lokacija sertifikata, na netu kaze da ne mora za CA da se koristi, ali ne smeta
 			GeneralName location = new GeneralName(GeneralName.uniformResourceIdentifier, new DERIA5String("http://localhost:8080/api/certificate/" + serialNumber));
 			
+			
 			SimpleDateFormat iso8601Formater = new SimpleDateFormat("yyyy-MM-dd");
 			Date startDate = iso8601Formater.parse(subjectData.getStartDate().toString());
 			Date endDate = iso8601Formater.parse(subjectData.getEndDate().toString());
 			
+			//null je ako je selfSigned
+			if(issuerExpirationDate != null) {
+				//ako je endDate posle endDate od issuera, uzmi endDate od issuera
+				if(endDate.after(issuerExpirationDate)) {
+					endDate = iso8601Formater.parse(issuerExpirationDate.toString());
+				}
+			}
+						
 			//Postavljaju se podaci za generisanje sertifiakta
 			X509v3CertificateBuilder certGen = new JcaX509v3CertificateBuilder(
 					issuerData.getX500name(),
@@ -59,9 +73,19 @@ public class CertificateGenerator {
 					subjectData.getX500name(),
 					subjectData.getPublicKey())
 					.addExtension(Extension.basicConstraints, true, new BasicConstraints(isCA)) // da li je certificat CA
-					.addExtension(Extension.authorityInfoAccess, false, location)
-					/*.addExtension(Extension.keyUsage, false, new KeyUsage(usage))*/; 
+					.addExtension(Extension.authorityInfoAccess, false, location)//lokacija sertifikata, na netu kaze da ne mora za CA da se koristi, ali ne smeta
+//					certGen..addExtension(Extension.keyUsage, true, new KeyUsage(KeyUsage.))
+//					.addExtension(Extension.extendedKeyUsage, false, new ExtendedKeyUsage(KeyPurposeId.anyExtendedKeyUsage))
+					;
+					/*.addExtension(Extension.keyUsage, false, new KeyUsage(usage))*/
 			
+			if(isCA) {
+				certGen.addExtension(Extension.keyUsage, true, new KeyUsage(KeyUsage.digitalSignature));
+			} else {
+				certGen.addExtension(Extension.keyUsage, true, new KeyUsage(KeyUsage.dataEncipherment));
+				certGen.addExtension(Extension.extendedKeyUsage, false, new ExtendedKeyUsage(KeyPurposeId.anyExtendedKeyUsage));
+			}
+					
 			//Generise se sertifikat
 			X509CertificateHolder certHolder = certGen.build(contentSigner);
 
