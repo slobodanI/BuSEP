@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script type="text/javascript" src="js/jquery-3.4.1.min.js"></script>
+<link rel="stylesheet" type="text/css" href="project.css">
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<link rel="stylesheet" type="text/css" href="bootstrap.min.css">
+<script type="text/javascript" src="js/createcertificate.js"></script>
+<script type="text/javascript" src="js/jquery-ui.js"></script>
+<link rel="stylesheet" type="text/css" href="jquery-ui.css">
+<meta charset="UTF-8">
+<title>Create certificate</title>
+</head>
+<body>
+
+	<div class="header"></div>
+	
+	<div class="aligned">
+	
+		<div>
+			<label class="radiotext radioalign">Type of Certificate  :  </label>
+			
+			<input class="radiosize radioalign" type="radio" id="self" name="type" value="self" checked="checked">
+			<label class="radiotext radioalign" for="self">Self Signed  </label>
+			<input class="radiosize radioalign" type="radio" id="ca" name="type" value="ca">
+			<label class="radiotext radioalign" for="ca">CA Certificate  </label>
+			<input class="radiosize radioalign" type="radio" id="end" name="type" value="end">
+			<label class="radiotext radioalign" for="end">End Certificate</label>
+		</div>
+		
+		<br>
+		<br>
+		
+		<div class="aligned">
+		
+			<form id="forma">
+		
+			<div id="formaCert" class="card mb-4 box-shadow">
+			
+				<div class="card-header text-center">
+	            	<h4 id='h4' class="my-0 font-weight-normal">Self Signed Certificate</h4>
+	        	</div>
+	        
+	        	<br/>
+		
+				<div class="form-group col-md-6">
+		    		<label>Common name</label>
+		    		<input id='common' class="form-control" type="url" required>
+		    	</div>
+		    	
+		    	<div class="form-group col-md-6">
+		    		<label>Given name</label>
+		    		<input id='given' class="form-control" type="text" required>
+		    	</div>
+		    	
+		    	<div class="form-group col-md-6">
+		    		<label>Surname</label>
+		    		<input id='surname' class="form-control" type="text" required>
+		    	</div>
+		    	
+		    	<div class="form-group col-md-6">
+		    		<label>Organization</label>
+		    		<input id='org' class="form-control" type="text" required>
+		    	</div>
+		    	
+		    	<div class="form-group col-md-6">
+		    		<label>Organizational unit name</label>
+		    		<input id='orgUnitName' class="form-control" type="text" required>
+		    	</div>
+		    	
+		    	<div class="form-group col-md-6">
+		    		<label>Country code</label>
+		    		<input id='cc' class="form-control" maxlength=2 type="text" required>
+		    	</div>
+		    	
+		    	<div class="form-group col-md-6">
+		    		<label>E-mail</label>
+		    		<input id='email' class="form-control" type="email" required>
+		    	</div>
+		    	
+		    	<div class="form-group col-md-6">
+        			<label>Expiration date</label>
+        			<input type="text" id="dateED" class="form-control" placeholder="Click to choose date">
+        		</div>
+        		
+        		<div id="issuerDiv" class="form-group col-md-6">
+		    		<label>Issuer</label>
+		    		<div id="select">
+		    		</div>
+		    	</div>
+		    	
+		    	<div id="issuerDiv" class="form-group col-md-6">
+		    		<button id="submit" class="btn btn-outline-primary" type="submit">Create certificate</button>
+		    	</div>
+		    	
+			</div>
+		
+		</form>
+		
+		</div>
+	
+	</div>
+
+</body>
+</html>

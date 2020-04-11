@@ -82,7 +82,9 @@ public class CertificateService {
 			X500Name x500name = CertificateUtil.generateX500Name(newCert);
 			KeyPair keyPair = CertificateUtil.generateKeyPair();
 
-			SubjectData subjectData = new SubjectData(keyPair.getPublic(), x500name, LocalDate.now(), newCert.getExpirationDate());
+			LocalDate dt = LocalDate.parse(newCert.getExpirationDate());
+			
+			SubjectData subjectData = new SubjectData(keyPair.getPublic(), x500name, LocalDate.now(), dt);
 			IssuerData issuerData = new IssuerData(keyPair.getPrivate(), x500name);
 
 			X509Certificate certificate = certificateGenerator.generateCertificate(subjectData, issuerData, true);	
@@ -107,7 +109,9 @@ public class CertificateService {
 			X500Name x500name = CertificateUtil.generateX500Name(newCert);
 			KeyPair keyPair = CertificateUtil.generateKeyPair();
 			
-			SubjectData subjectData = new SubjectData(keyPair.getPublic(), x500name, LocalDate.now(), newCert.getExpirationDate());
+			LocalDate dt = LocalDate.parse(newCert.getExpirationDate());
+			
+			SubjectData subjectData = new SubjectData(keyPair.getPublic(), x500name, LocalDate.now(), dt);
 			
 			X509Certificate certificate = certificateGenerator.generateCertificate(subjectData, issuerData, isCa);
 			
