@@ -141,5 +141,20 @@ public class CertificateController {
 		return new ResponseEntity<>(new CertificateDTO(cert), HttpStatus.OK);
 	}
 	
+	@PostMapping("/revoke/{serialNumber}")
+	public void revokeCertificate(@PathVariable String serialNumber) {		
+		certificateService.revokeCertificate(serialNumber);
+	}
+	
+	@GetMapping("/check/{serialNumber}")
+	public ResponseEntity<String> checkCertificate(@PathVariable String serialNumber) {
+		boolean result = certificateService.checkValidity(serialNumber);
+		
+		if (result == false) {
+			return new ResponseEntity<>("NIJE VALIDAN", HttpStatus.OK);
+		}
+		
+		return new ResponseEntity<>("VALIDAN", HttpStatus.OK);
+	}
 	
 }

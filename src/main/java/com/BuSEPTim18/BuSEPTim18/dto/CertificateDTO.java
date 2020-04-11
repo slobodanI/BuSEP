@@ -4,6 +4,7 @@ import java.math.BigInteger;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 
+import javax.security.auth.x500.X500Principal;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.bouncycastle.asn1.x500.AttributeTypeAndValue;
@@ -25,6 +26,8 @@ public class CertificateDTO {
 	private String email;
 	private BigInteger serialNumber;
 	private CertificateStatus status;
+	private String issuerName;
+	private String subjectName;
 	
 	public CertificateDTO(X509Certificate certificate) {
 		try {
@@ -53,6 +56,12 @@ public class CertificateDTO {
 			}
 
 			serialNumber = certificate.getSerialNumber();
+			String[] split1 = certificate.getIssuerX500Principal().getName().split(",");
+			// UID=8055a212-5673-4c6e-a526-56b14b8a0233			
+			issuerName = split1[0];
+			
+			String[] split2 = certificate.getSubjectX500Principal().getName().split(",");	
+			subjectName = split2[0];
 		} catch (CertificateEncodingException e) {
 			e.printStackTrace();
 		}
@@ -128,6 +137,22 @@ public class CertificateDTO {
 
 	public void setStatus(CertificateStatus status) {
 		this.status = status;
+	}
+
+	public String getIssuerName() {
+		return issuerName;
+	}
+
+	public void setIssuerName(String issuerName) {
+		this.issuerName = issuerName;
+	}
+
+	public String getSubjectName() {
+		return subjectName;
+	}
+
+	public void setSubjectName(String subjectName) {
+		this.subjectName = subjectName;
 	}
 	
 	
