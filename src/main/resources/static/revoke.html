@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script type="text/javascript" src="js/jquery-3.4.1.min.js"></script>
+<link rel="stylesheet" type="text/css" href="project.css">
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<link rel="stylesheet" type="text/css" href="bootstrap.min.css">
+<script type="text/javascript" src="js/revoke.js"></script>
+<script type="text/javascript" src="js/jquery-ui.js"></script>
+<link rel="stylesheet" type="text/css" href="jquery-ui.css">
+<meta charset="UTF-8">
+<title>Revoke Certificate</title>
+</head>
+<body>
+
+	<div class="header"></div>
+	
+	<br>
+	<br>
+	
+	<div class="aligned">
+		
+			<form id="forma1">
+		
+			<div id="formaCert" class="card mb-4 box-shadow">
+			
+				<div class="card-header text-center">
+	            	<h4 id='h4' class="my-0 font-weight-normal">Check certificate</h4>
+	        	</div>
+	        
+	        	<br/>
+		
+				<div class="form-group col-md-6">
+		    		<label>Serial Number</label>
+		    		<input id='serNumCheck' class="form-control" type="number" required>
+		    	</div>
+		    	
+		    	<div class="form-group col-md-6">
+		    		<label id="valid">Certificate is: </label>
+		    	</div>
+		    	
+		    	<div id="issuerDiv" class="form-group col-md-6">
+		    		<button id="submitCheck" class="btn btn-outline-primary" type="submit">Revoke certificate</button>
+		    	</div>
+		    	
+			</div>
+		
+		</form>
+		
+		</div>
+		
+		<br>
+		
+		<div class="aligned">
+		
+			<form id="forma2">
+		
+			<div id="formaCert" class="card mb-4 box-shadow">
+			
+				<div class="card-header text-center">
+	            	<h4 id='h4' class="my-0 font-weight-normal">Revoke certificate</h4>
+	        	</div>
+	        
+	        	<br/>
+		
+				<div class="form-group col-md-6">
+		    		<label>Serial Number</label>
+		    		<input id='serNumRevoke' class="form-control" type="number" required>
+		    	</div>
+		    	
+		    	<div id="issuerDiv" class="form-group col-md-6">
+		    		<button id="submitRevoke" class="btn btn-outline-primary" type="submit">Check certificate</button>
+		    	</div>
+		    	
+			</div>
+		
+		</form>
+		
+		</div>
+	
+</body>
+</html>

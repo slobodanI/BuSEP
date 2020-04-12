@@ -167,10 +167,10 @@ public class CertificateController {
 		boolean result = certificateService.checkValidity(serialNumber);
 		
 		if (result == false) {
-			return new ResponseEntity<>("NIJE VALIDAN", HttpStatus.OK);
+			return new ResponseEntity<>("NOT VALID", HttpStatus.OK);
 		}
 		
-		return new ResponseEntity<>("VALIDAN", HttpStatus.OK);
+		return new ResponseEntity<>("VALID", HttpStatus.OK);
 	}
 	
 }
