@@ -11,7 +11,7 @@ function RenderHtmlOnSuccess() {
 			var data = certifikati;
 			
 			//pocetak kreiranja html-a
-			var html = '<table id="tableCert" class="display" ><thead><tr><th>Common Name</th><th>Given name</th><th>Surname</th><th>Organization</th><th>Organizational Unit</th><th>Country code</th><th>E-mail</th><th>Serial number</th><th>Status</th></thead><tbody>';
+			var html = '<table id="tableCert" class="display" ><thead><tr><th>Common Name</th><th>Given name</th><th>Surname</th><th>Organization</th><th>Organizational Unit</th><th>Country code</th><th>E-mail</th><th>Serial number</th><th>Download</th></thead><tbody>';
 			
 			data.forEach((item)=>{
  			
@@ -52,7 +52,7 @@ function RenderHtmlOnSuccess() {
 				  html+='</td>';
 				  
 				  html+='<td>';
-				  html+=item.status;
+				  html+='<input type="button" class="DownloadBTN" value="Download">';
 				  html+='</td>';
 				  
 				  html+='</tr>';
@@ -68,6 +68,16 @@ function RenderHtmlOnSuccess() {
 		    var table = $('#tableCert').dataTable({
 		        "pagingType": "full_numbers",
 		        select: false
+		    });
+		    
+		    $('.DownloadBTN').on("click", function () {
+		    	var data = table.api().row( $(this).parents('tr') ).data();
+		    	var serialNumber = Number(data[7]);
+		    	
+		    	$("#hid").attr("href","http://localhost:8080/api/certificates/download/"+serialNumber);
+		    	
+		    	$('#hid')[0].click(function(){
+		        });
 		    });
 		    
 		    $('.dataTables_length').addClass('bs-select');
