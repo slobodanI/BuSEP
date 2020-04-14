@@ -35,6 +35,7 @@ public class CertificateController {
 	@GetMapping
 	public ResponseEntity<List<CertificateDTO>> getCertificates() {
 		
+		//certificateService.validateCerthPath();
 		return new ResponseEntity<>(certificateService.getAll(), HttpStatus.OK);
 	}
 	
@@ -59,6 +60,7 @@ public class CertificateController {
 		if(cert == null) {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);			
 		} 		
+		//Ovo jos prokomentarisati sa ostalima
 		CertificateDTO certDTO = new CertificateDTO(cert);
 		
 		return new ResponseEntity<>(certDTO, HttpStatus.OK);				
@@ -115,8 +117,8 @@ public class CertificateController {
 	 * 
 	 * @return kreirani intermediate sertifikat
 	 */
-	@PostMapping("/intermediate/{serialNumber}")
-	public ResponseEntity<CertificateDTO> createIntermediate(@PathVariable String serialNumber, @RequestBody @Valid CertificateNewDTO certNewDTO) {
+	@PostMapping("/intermediate/{serialNumber}/{holderType}")
+	public ResponseEntity<CertificateDTO> createIntermediate(@PathVariable String serialNumber, @RequestBody @Valid CertificateNewDTO certNewDTO,@PathVariable String holderType) {
 		
 		LocalDate dt = LocalDate.parse(certNewDTO.getExpirationDate());
 		
@@ -124,13 +126,13 @@ public class CertificateController {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 		
-		X509Certificate cert = certificateService.addCetrificate(serialNumber, certNewDTO, true);
+		X509Certificate cert = certificateService.addCetrificate(serialNumber, certNewDTO, true,holderType);
 		
 		if (cert == null) {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 		
-		return new ResponseEntity<>(new CertificateDTO(cert), HttpStatus.OK);
+		return new ResponseEntity<>(new CertificateDTO(cert,holderType), HttpStatus.OK);
 	}
 	
 	/**
@@ -139,8 +141,8 @@ public class CertificateController {
 	 * 
 	 * @return kreirani end sertifikat
 	 */
-	@PostMapping("/end/{serialNumber}")
-	public ResponseEntity<CertificateDTO> createEnd(@PathVariable String serialNumber, @RequestBody @Valid CertificateNewDTO certNewDTO) {
+	@PostMapping("/end/{serialNumber}/{holderType}")
+	public ResponseEntity<CertificateDTO> createEnd(@PathVariable String serialNumber, @RequestBody @Valid CertificateNewDTO certNewDTO,@PathVariable String holderType) {
 		
 		LocalDate dt = LocalDate.parse(certNewDTO.getExpirationDate());
 		
@@ -148,13 +150,13 @@ public class CertificateController {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 		
-		X509Certificate cert = certificateService.addCetrificate(serialNumber, certNewDTO, false);
+		X509Certificate cert = certificateService.addCetrificate(serialNumber, certNewDTO, false,holderType);
 		
 		if (cert == null) {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 		
-		return new ResponseEntity<>(new CertificateDTO(cert), HttpStatus.OK);
+		return new ResponseEntity<>(new CertificateDTO(cert,holderType), HttpStatus.OK);
 	}
 	
 	@PostMapping("/revoke/{serialNumber}")
@@ -172,5 +174,7 @@ public class CertificateController {
 		
 		return new ResponseEntity<>("VALID", HttpStatus.OK);
 	}
+	
+	
 	
 }

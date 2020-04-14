@@ -28,7 +28,46 @@ public class CertificateDTO {
 	private CertificateStatus status;
 	private String issuerName;
 	private String subjectName;
+	private String holderType;
 	
+	public CertificateDTO(X509Certificate certificate,String holderType) {
+		try {
+			X500Name name = new JcaX509CertificateHolder(certificate).getSubject();
+			RDN[] rnds = name.getRDNs();
+
+			for (RDN rdn: rnds) {
+				AttributeTypeAndValue[] values = rdn.getTypesAndValues();
+				for (AttributeTypeAndValue val : values) {
+					if (val.getType().equals(BCStyle.CN)) {
+						commonName = val.getValue().toString();
+					} else if (val.getType().equals(BCStyle.GIVENNAME)) {
+						givenname = val.getValue().toString();
+					} else if (val.getType().equals(BCStyle.SURNAME)) {
+						surname = val.getValue().toString();
+					} else if (val.getType().equals(BCStyle.O)) {
+						organization = val.getValue().toString();
+					} else if (val.getType().equals(BCStyle.OU)) {
+						organizationalUnit = val.getValue().toString();
+					} else if (val.getType().equals(BCStyle.C)) {
+						countryCode = val.getValue().toString();
+					} else if (val.getType().equals(BCStyle.E)) {
+						email = val.getValue().toString();
+					}
+				}
+			}
+
+			serialNumber = certificate.getSerialNumber();
+			String[] split1 = certificate.getIssuerX500Principal().getName().split(",");
+			// UID=8055a212-5673-4c6e-a526-56b14b8a0233			
+			issuerName = split1[0];
+			
+			String[] split2 = certificate.getSubjectX500Principal().getName().split(",");	
+			subjectName = split2[0];
+			this.holderType = holderType;
+		} catch (CertificateEncodingException e) {
+			e.printStackTrace();
+		}
+	}
 	public CertificateDTO(X509Certificate certificate) {
 		try {
 			X500Name name = new JcaX509CertificateHolder(certificate).getSubject();
@@ -62,6 +101,7 @@ public class CertificateDTO {
 			
 			String[] split2 = certificate.getSubjectX500Principal().getName().split(",");	
 			subjectName = split2[0];
+			this.holderType = "";
 		} catch (CertificateEncodingException e) {
 			e.printStackTrace();
 		}
@@ -153,6 +193,14 @@ public class CertificateDTO {
 
 	public void setSubjectName(String subjectName) {
 		this.subjectName = subjectName;
+	}
+
+	public String getHolderType() {
+		return holderType;
+	}
+
+	public void setHolderType(String holderType) {
+		this.holderType = holderType;
 	}
 	
 	

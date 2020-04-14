@@ -11,7 +11,7 @@ function RenderHtmlOnSuccess() {
 			var data = certifikati;
 			
 			//pocetak kreiranja html-a
-			var html = '<table id="tableCert" class="display" ><thead><tr><th>Common Name</th><th>Given name</th><th>Surname</th><th>Organization</th><th>Organizational Unit</th><th>Country code</th><th>E-mail</th><th>Serial number</th><th>Download</th></thead><tbody>';
+			var html = '<table id="tableCert" class="display" ><thead><tr><th>Common Name</th><th>Given name</th><th>Surname</th><th>Organization</th><th>Organizational Unit</th><th>Country code</th><th>E-mail</th><th>Serial number</th><th>Holder Type</th><th>Download</th></thead><tbody>';
 			
 			data.forEach((item)=>{
  			
@@ -51,6 +51,10 @@ function RenderHtmlOnSuccess() {
 				  html+=item.serialNumber;
 				  html+='</td>';
 				  
+				  html+='<td>';
+				  html+=item.holderType;
+				  html+='</td>';
+				
 				  html+='<td>';
 				  html+='<input type="button" class="DownloadBTN" value="Download">';
 				  html+='</td>';
