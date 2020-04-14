@@ -44,7 +44,21 @@ function VratiCA()
 		}	
 	});
 }
+//
+function ponudiTipHandlera()
+{
+	var html = '<select id="holderType" class="form-control" required><option value="-1">Choose holder type</option>';
+	html+='<option value="Servis">Servis</option>';
+	html+='<option value="Podsistem">Podsistem</option>';
+	html+='<option value="Korisnik">Korisnik</option>';
 
+	html+= '</select>';
+	
+	$('#selectType').html(html);
+}
+
+
+//
 function KreirajCert(){
 	
 	var url1;
@@ -64,7 +78,7 @@ function KreirajCert(){
 		else
 		{
 			
-			url1 = "api/certificates/intermediate/" + $("#caissuer :selected").val();
+			url1 = "api/certificates/intermediate/" + $("#caissuer :selected").val()+"/"+$("#holderType :selected").val();
 		}
 	}
 	else if($('#end').is(':checked'))
@@ -77,7 +91,7 @@ function KreirajCert(){
 		else
 		{
 			
-			url1 = "api/certificates/end/" + $("#caissuer :selected").val();
+			url1 = "api/certificates/end/" + $("#caissuer :selected").val()+"/"+$("#holderType :selected").val();
 		}
 	}
 	else
@@ -115,6 +129,7 @@ function KreirajCert(){
 $(document).ready(function() { 
 	$('.header').load("navbar.html");
 	$('#issuerDiv').hide();
+	$('#holderTypeDiv').hide();
 	
 	
 	//podesavanje da ne moze kraj odsustva da bude pre pocetka i druga podesavnja za datepicker
@@ -139,14 +154,18 @@ $(document).ready(function() {
 	   else if ( this.value === 'ca' ) 
 	   {
 		   $('#issuerDiv').show();
+		   $('#holderTypeDiv').show();
 		   $('#h4').text("CA Certificate");
 		   VratiCA();
+		   ponudiTipHandlera();
 	   } 
 	   else if ( this.value === 'end') 
 	   {
 		   $('#h4').text("End Certificate");
 		   $('#issuerDiv').show();
-		   VratiCA();	    
+		   $('#holderTypeDiv').show();
+		   VratiCA();	
+		   ponudiTipHandlera();
 		   
 	   } 
 	}

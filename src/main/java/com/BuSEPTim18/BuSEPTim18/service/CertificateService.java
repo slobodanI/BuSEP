@@ -5,6 +5,10 @@ import java.io.FileInputStream;
 import java.io.ObjectInputStream;
 import java.io.StringWriter;
 import java.security.KeyPair;
+import java.security.KeyStore;
+import java.security.Security;
+import java.security.cert.CertPath;
+import java.security.cert.CertPathValidator;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateExpiredException;
 import java.security.cert.CertificateNotYetValidException;
@@ -22,9 +26,11 @@ import org.springframework.stereotype.Service;
 
 import com.BuSEPTim18.BuSEPTim18.dto.CertificateDTO;
 import com.BuSEPTim18.BuSEPTim18.dto.CertificateNewDTO;
+import com.BuSEPTim18.BuSEPTim18.model.CertificateHolderType;
 import com.BuSEPTim18.BuSEPTim18.model.IssuerData;
 import com.BuSEPTim18.BuSEPTim18.model.RevokedCertificate;
 import com.BuSEPTim18.BuSEPTim18.model.SubjectData;
+import com.BuSEPTim18.BuSEPTim18.repository.CertificateHolderTypeRepository;
 import com.BuSEPTim18.BuSEPTim18.repository.KeyStoreRepository;
 import com.BuSEPTim18.BuSEPTim18.repository.RevokedCertificateRepository;
 import com.BuSEPTim18.BuSEPTim18.utils.CertificateGenerator;
@@ -41,18 +47,40 @@ public class CertificateService {
 	KeyStoreRepository certificateRepository;
 	
 	@Autowired
+	CertificateHolderTypeRepository certificateHolderTypeRepository;
+	
+	@Autowired
 	RevokedCertificateRepository revokedCertificateRepository;
 	
 	public List<CertificateDTO> getAll() {
 		
 		List<X509Certificate> listCert = new ArrayList<X509Certificate>();
 		List<CertificateDTO> listCertDTO = new ArrayList<CertificateDTO>();
+		List<CertificateHolderType> listCertHolderType = new ArrayList<CertificateHolderType>();
 		
 		listCert = certificateRepository.getCertificates();
+		listCertHolderType = certificateHolderTypeRepository.findAll();
 		
 		for (X509Certificate cert : listCert) {
+			if(!listCertHolderType.isEmpty()) {
+			for(CertificateHolderType c : listCertHolderType) {
+				if(c.getSerialNumber().equals(cert.getSerialNumber().toString())){
+					System.out.println("Jesu equal");
+					listCertDTO.add(new CertificateDTO(cert,c.getHolderType()));
+				}else {
+					listCertDTO.add(new CertificateDTO(cert));
+					System.out.println("Nisu equal");
+				}
+			}
+		}else {
 			listCertDTO.add(new CertificateDTO(cert));
+			System.out.println("Prazna Lista");
 		}
+		}
+		
+//		for (X509Certificate cert : listCert) {
+//			listCertDTO.add(new CertificateDTO(cert));
+//		}
 		
 		return 	listCertDTO;
 	}
@@ -61,6 +89,7 @@ public class CertificateService {
 		
 		List<X509Certificate> listCert = new ArrayList<X509Certificate>();
 		List<CertificateDTO> listCertDTO = new ArrayList<CertificateDTO>();
+	
 		
 		listCert = certificateRepository.getCertificates();
 		
@@ -70,7 +99,8 @@ public class CertificateService {
 				// ako je validan
 				if(checkValidity(cert.getSerialNumber().toString())) {
 					listCertDTO.add(new CertificateDTO(cert));
-				}				
+
+				}
 			}			
 		}
 		
@@ -85,8 +115,8 @@ public List<CertificateDTO> getAllEnd() {
 		listCert = certificateRepository.getCertificates();
 		
 		for (X509Certificate cert : listCert) {
-			if(cert.getBasicConstraints() == -1) {
-				listCertDTO.add(new CertificateDTO(cert));
+			if(checkValidity(cert.getSerialNumber().toString())) {
+				listCertDTO.add(new CertificateDTO(cert,""));
 			}			
 		}
 		
@@ -125,15 +155,16 @@ public List<CertificateDTO> getAllEnd() {
 
 			certificateRepository.saveCertificate(certificate.getSerialNumber().toString(), keyPair.getPrivate(), certificate);
 		
-			return new CertificateDTO(certificate);
+			return new CertificateDTO(certificate,"");
 		} catch(Exception e) {
 			return null;
 		}
 	}
 	
 	// dodaje sertifikat, ako je isCa true, dodaj intermediate sertifikat, ako je false, dodaj end sertifikat
-	public X509Certificate addCetrificate(String issuerSerialNumber, CertificateNewDTO newCert, boolean isCa) {
+	public X509Certificate addCetrificate(String issuerSerialNumber, CertificateNewDTO newCert, boolean isCa,String holderType) {
 		IssuerData issuerData = certificateRepository.getIssuerData(issuerSerialNumber);
+		List<CertificateHolderType> holderTypeList = certificateHolderTypeRepository.findAll();
 		
 		// ovo mi treba za proveru datuma validnosti, u odnosu na issuera
 		X509Certificate cert = certificateRepository.getCertificate(issuerSerialNumber).orElse(null);
@@ -144,6 +175,10 @@ public List<CertificateDTO> getAllEnd() {
 		if (issuerData == null || getOne(issuerSerialNumber).getBasicConstraints() == -1) {
 			return null; // vrati bad request
 		}
+		
+		if(holderType == null) return null;
+		if(!holderType.equals("Servis") && !holderType.equals("Podsistem") && !holderType.equals("Korisnik")) return null;
+		
 
 		try {
 			X500Name x500name = CertificateUtil.generateX500Name(newCert);
@@ -156,6 +191,11 @@ public List<CertificateDTO> getAllEnd() {
 			X509Certificate certificate = certificateGenerator.generateCertificate(subjectData, issuerData, isCa, cert.getNotAfter());
 			
 			certificateRepository.saveCertificate(certificate.getSerialNumber().toString(), keyPair.getPrivate(), certificate);
+			
+			CertificateHolderType certHolderType =  new CertificateHolderType(certificate.getSerialNumber().toString(),holderType);
+			holderTypeList.add(certHolderType);
+			certificateHolderTypeRepository.saveAll(holderTypeList);
+			
 			
 			return certificate;
 		} catch (Exception e) {

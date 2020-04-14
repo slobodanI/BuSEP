@@ -52,6 +52,7 @@ public class KeyStoreRepository {
 				
 				if (keyStore.isKeyEntry(alias)) {		
 					certificates.add(getCertificate(alias).get());
+					
 				}
 			}
 		
