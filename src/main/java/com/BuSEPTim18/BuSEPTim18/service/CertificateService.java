@@ -59,23 +59,34 @@ public class CertificateService {
 		List<CertificateHolderType> listCertHolderType = new ArrayList<CertificateHolderType>();
 		
 		listCert = certificateRepository.getCertificates();
+		System.out.println("***** IMA IH U FAJLU: " + listCert.size());
+//		for(X509Certificate certifikat : listCert) {
+//			System.out.println("Serijski broj" + certifikat.getSerialNumber());
+//		}
+		
 		listCertHolderType = certificateHolderTypeRepository.findAll();
 		
 		for (X509Certificate cert : listCert) {
+			
+			CertificateDTO tempDTO = new CertificateDTO(cert);
+			
 			if(!listCertHolderType.isEmpty()) {
-			for(CertificateHolderType c : listCertHolderType) {
-				if(c.getSerialNumber().equals(cert.getSerialNumber().toString())){
-					System.out.println("Jesu equal");
-					listCertDTO.add(new CertificateDTO(cert,c.getHolderType()));
-				}else {
-					listCertDTO.add(new CertificateDTO(cert));
-					System.out.println("Nisu equal");
+				for(CertificateHolderType c : listCertHolderType) {
+					if(c.getSerialNumber().equals(cert.getSerialNumber().toString())){
+						System.out.println("Jesu equal");
+	//					listCertDTO.add(new CertificateDTO(cert,c.getHolderType()));
+						tempDTO.setHolderType(c.getHolderType());
+					}
+	//				else {
+	//					listCertDTO.add(new CertificateDTO(cert));
+	//					System.out.println("Nisu equal");
+	//				}
+					listCertDTO.add(tempDTO);
 				}
+			}else {
+				listCertDTO.add(tempDTO);
+//				System.out.println("Prazna Lista ");
 			}
-		}else {
-			listCertDTO.add(new CertificateDTO(cert));
-			System.out.println("Prazna Lista");
-		}
 		}
 		
 //		for (X509Certificate cert : listCert) {
@@ -107,6 +118,7 @@ public class CertificateService {
 		return listCertDTO;
 	}
 	
+	//nije korisceno
 public List<CertificateDTO> getAllEnd() {
 		
 		List<X509Certificate> listCert = new ArrayList<X509Certificate>();
@@ -115,9 +127,11 @@ public List<CertificateDTO> getAllEnd() {
 		listCert = certificateRepository.getCertificates();
 		
 		for (X509Certificate cert : listCert) {
-			if(checkValidity(cert.getSerialNumber().toString())) {
-				listCertDTO.add(new CertificateDTO(cert,""));
-			}			
+			if(cert.getBasicConstraints() == -1) {			
+				if(checkValidity(cert.getSerialNumber().toString())) {
+					listCertDTO.add(new CertificateDTO(cert,""));
+				}
+			}		
 		}
 		
 		return listCertDTO;
@@ -153,7 +167,7 @@ public List<CertificateDTO> getAllEnd() {
 
 			X509Certificate certificate = certificateGenerator.generateCertificate(subjectData, issuerData, true, null);	
 
-			certificateRepository.saveCertificate(certificate.getSerialNumber().toString(), keyPair.getPrivate(), certificate);
+			certificateRepository.saveCertificateSELFSIGNED(certificate.getSerialNumber().toString(), keyPair.getPrivate(), certificate);
 		
 			return new CertificateDTO(certificate,"");
 		} catch(Exception e) {
@@ -190,7 +204,12 @@ public List<CertificateDTO> getAllEnd() {
 			
 			X509Certificate certificate = certificateGenerator.generateCertificate(subjectData, issuerData, isCa, cert.getNotAfter());
 			
-			certificateRepository.saveCertificate(certificate.getSerialNumber().toString(), keyPair.getPrivate(), certificate);
+			if(isCa == true) {
+				certificateRepository.saveCertificateINTERMEDIATE(certificate.getSerialNumber().toString(), keyPair.getPrivate(), certificate);
+			} else {
+				certificateRepository.saveCertificateEND(certificate.getSerialNumber().toString(), keyPair.getPrivate(), certificate);
+			}
+			
 			
 			CertificateHolderType certHolderType =  new CertificateHolderType(certificate.getSerialNumber().toString(),holderType);
 			holderTypeList.add(certHolderType);
@@ -315,7 +334,11 @@ public List<CertificateDTO> getAllEnd() {
 	public boolean checkValidity(String serialNumber) {
 		X509Certificate certificate = getOne(serialNumber);
 		List<RevokedCertificate> certificates = revokedCertificateRepository.findAll();
-	
+		
+		if(certificate == null) {
+			return false;
+		}
+		
 		try {
 			certificate.checkValidity();
 		} catch (CertificateExpiredException | CertificateNotYetValidException  e) {
