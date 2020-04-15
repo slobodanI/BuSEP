@@ -28,7 +28,7 @@ public class CertificateDTO {
 	private CertificateStatus status;
 	private String issuerName;
 	private String subjectName;
-	private String holderType;
+	private String holderType = "";
 	
 	public CertificateDTO(X509Certificate certificate,String holderType) {
 		try {

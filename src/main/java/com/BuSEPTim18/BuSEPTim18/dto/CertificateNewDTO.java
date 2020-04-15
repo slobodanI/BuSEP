@@ -7,12 +7,11 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.hibernate.validator.constraints.URL;
 
 public class CertificateNewDTO {
 	
 	@NotNull
-	@URL
+	@Size(min = 3)
 	private String commonName;
 	@NotNull
 	private String givenname;
@@ -35,7 +34,7 @@ public class CertificateNewDTO {
 		// TODO Auto-generated constructor stub
 	}
 			
-	public CertificateNewDTO(@NotNull @URL String commonName, @NotNull String givenname, @NotNull String surname,
+	public CertificateNewDTO(@NotNull @Size(min = 3) String commonName, @NotNull String givenname, @NotNull String surname,
 			@NotNull String organization, @NotNull String organizationalUnit,
 			@NotNull @Size(min = 2, max = 2) String countryCode, @NotNull @Email String email,
 			@NotNull String expirationDate) {
