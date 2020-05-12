@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import javax.xml.bind.DatatypeConverter;
+
 import org.bouncycastle.asn1.x500.X500Name;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -147,7 +149,10 @@ public List<CertificateDTO> getAllEnd() {
 		StringWriter streamWritter = new StringWriter();
 		
 		try {
-			streamWritter.write(CertificateUtil.encode(cert.getEncoded()));
+			streamWritter.write("-----BEGIN CERTIFICATE-----\n");
+			streamWritter.write(DatatypeConverter.printBase64Binary(cert.getEncoded()).replaceAll("(.{64})", "$1\n"));
+			streamWritter.write("\n-----END CERTIFICATE-----\n");
+			//streamWritter.write(CertificateUtil.encode(cert.getEncoded()));
 		} catch (CertificateEncodingException e) {
 			e.printStackTrace();
 		}
