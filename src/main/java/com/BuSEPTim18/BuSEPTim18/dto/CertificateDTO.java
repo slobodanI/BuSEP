@@ -12,8 +12,11 @@ import org.bouncycastle.asn1.x500.RDN;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.style.BCStyle;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.BuSEPTim18.BuSEPTim18.model.CertificateStatus;
+import com.BuSEPTim18.BuSEPTim18.service.DataValidationService;
+import com.BuSEPTim18.BuSEPTim18.utils.CertificateGenerator;
 
 public class CertificateDTO {
 	
@@ -30,6 +33,7 @@ public class CertificateDTO {
 	private String subjectName;
 	private String holderType = "";
 	
+
 	public CertificateDTO(X509Certificate certificate,String holderType) {
 		try {
 			X500Name name = new JcaX509CertificateHolder(certificate).getSubject();
@@ -55,6 +59,9 @@ public class CertificateDTO {
 					}
 				}
 			}
+			
+			
+
 
 			serialNumber = certificate.getSerialNumber();
 			String[] split1 = certificate.getIssuerX500Principal().getName().split(",");

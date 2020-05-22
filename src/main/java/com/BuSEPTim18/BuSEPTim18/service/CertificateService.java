@@ -54,6 +54,10 @@ public class CertificateService {
 	@Autowired
 	RevokedCertificateRepository revokedCertificateRepository;
 	
+	@Autowired
+	DataValidationService dvService;
+	
+	
 	public List<CertificateDTO> getAll() {
 		
 		List<X509Certificate> listCert = new ArrayList<X509Certificate>();
@@ -72,6 +76,7 @@ public class CertificateService {
 			
 			CertificateDTO tempDTO = new CertificateDTO(cert);
 			
+			
 			if(!listCertHolderType.isEmpty()) {
 				for(CertificateHolderType c : listCertHolderType) {
 					if(c.getSerialNumber().equals(cert.getSerialNumber().toString())){
@@ -83,10 +88,10 @@ public class CertificateService {
 	//					listCertDTO.add(new CertificateDTO(cert));
 	//					System.out.println("Nisu equal");
 	//				}
-					listCertDTO.add(tempDTO);
+					listCertDTO.add(dvService.escapeCertDto(tempDTO));
 				}
 			}else {
-				listCertDTO.add(tempDTO);
+				listCertDTO.add(dvService.escapeCertDto(tempDTO));
 //				System.out.println("Prazna Lista ");
 			}
 		}
@@ -94,6 +99,7 @@ public class CertificateService {
 //		for (X509Certificate cert : listCert) {
 //			listCertDTO.add(new CertificateDTO(cert));
 //		}
+		
 		
 		return 	listCertDTO;
 	}

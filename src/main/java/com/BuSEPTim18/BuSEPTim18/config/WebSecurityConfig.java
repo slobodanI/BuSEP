@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -26,6 +27,7 @@ import com.BuSEPTim18.BuSEPTim18.service.CustomUserDetailsService;
 		securedEnabled = true,
 		prePostEnabled = true
 		)
+@EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	// Implementacija PasswordEncoder-a koriscenjem BCrypt hashing funkcije.
@@ -72,6 +74,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.antMatchers("/api/certificates/**").permitAll()
 				.antMatchers("/images/**").permitAll()
 				.antMatchers("/favicon.ico").permitAll()
+				.antMatchers("/js/**").permitAll()
 				// svaki zahtev mora biti autorizovan
 				.anyRequest().authenticated().and()
 				
@@ -81,7 +84,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.addFilterBefore(new TokenAuthenticationFilter(tokenUtils, jwtUserDetailsService),
 						BasicAuthenticationFilter.class);
 
+
 		http.csrf().disable();
+	
 	}
 
 	// Generalna bezbednost aplikacije
