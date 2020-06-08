@@ -74,6 +74,10 @@ public class CertificateService {
 		
 		for (X509Certificate cert : listCert) {
 			
+			if(!this.checkValidity(cert.getSerialNumber().toString())) {
+				continue;
+			}
+			
 			CertificateDTO tempDTO = new CertificateDTO(cert);
 			
 			
