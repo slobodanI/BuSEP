@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import javax.xml.bind.DatatypeConverter;
+
 import org.bouncycastle.asn1.x500.X500Name;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -52,6 +54,10 @@ public class CertificateService {
 	@Autowired
 	RevokedCertificateRepository revokedCertificateRepository;
 	
+	@Autowired
+	DataValidationService dvService;
+	
+	
 	public List<CertificateDTO> getAll() {
 		
 		List<X509Certificate> listCert = new ArrayList<X509Certificate>();
@@ -70,6 +76,7 @@ public class CertificateService {
 			
 			CertificateDTO tempDTO = new CertificateDTO(cert);
 			
+			
 			if(!listCertHolderType.isEmpty()) {
 				for(CertificateHolderType c : listCertHolderType) {
 					if(c.getSerialNumber().equals(cert.getSerialNumber().toString())){
@@ -81,10 +88,10 @@ public class CertificateService {
 	//					listCertDTO.add(new CertificateDTO(cert));
 	//					System.out.println("Nisu equal");
 	//				}
-					listCertDTO.add(tempDTO);
+					listCertDTO.add(dvService.escapeCertDto(tempDTO));
 				}
 			}else {
-				listCertDTO.add(tempDTO);
+				listCertDTO.add(dvService.escapeCertDto(tempDTO));
 //				System.out.println("Prazna Lista ");
 			}
 		}
@@ -92,6 +99,7 @@ public class CertificateService {
 //		for (X509Certificate cert : listCert) {
 //			listCertDTO.add(new CertificateDTO(cert));
 //		}
+		
 		
 		return 	listCertDTO;
 	}
@@ -147,7 +155,10 @@ public List<CertificateDTO> getAllEnd() {
 		StringWriter streamWritter = new StringWriter();
 		
 		try {
-			streamWritter.write(CertificateUtil.encode(cert.getEncoded()));
+			streamWritter.write("-----BEGIN CERTIFICATE-----\n");
+			streamWritter.write(DatatypeConverter.printBase64Binary(cert.getEncoded()).replaceAll("(.{64})", "$1\n"));
+			streamWritter.write("\n-----END CERTIFICATE-----\n");
+			//streamWritter.write(CertificateUtil.encode(cert.getEncoded()));
 		} catch (CertificateEncodingException e) {
 			e.printStackTrace();
 		}
